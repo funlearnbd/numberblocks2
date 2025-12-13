@@ -3,113 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Let's Build (Horizontal)</title>
+    <title>Let's Build 1-20!</title>
     <style>
         body {
             background-color: #f0f4f8; 
             font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
             height: 100vh; margin: 0; 
             user-select: none; touch-action: none; overflow: hidden;
-            padding: 5px; box-sizing: border-box;
+            padding: 10px; box-sizing: border-box;
         }
 
-        /* --- START OVERLAY --- */
+        /* START OVERLAY */
         #start-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.98); z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: rgba(255, 255, 255, 0.98);
+            z-index: 9999;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
         }
+
         #start-btn {
-            font-size: 30px; padding: 15px 50px;
-            background: #ff4d4d; color: white; border: 4px solid #d63031; border-radius: 20px;
-            cursor: pointer; font-weight: bold;
+            font-size: 40px; padding: 20px 60px;
+            background: #ff4d4d; color: white;
+            border: 4px solid #d63031; border-radius: 20px;
+            box-shadow: 0 10px 0 #d63031;
+            cursor: pointer; font-family: inherit; font-weight: bold;
+            transition: transform 0.1s;
         }
+        #start-btn:active { transform: translateY(5px); box-shadow: 0 5px 0 #d63031; }
 
-        /* --- TOP BAR (Nav & Title) --- */
-        .top-bar {
+        /* HEADER */
+        .nav-row {
             display: flex; justify-content: space-between; align-items: center;
-            width: 98%; height: 50px; margin-bottom: 5px;
+            width: 100%; max-width: 900px;
+            height: 50px; margin-bottom: 5px; z-index: 1000;
         }
-        
-        .left-controls { display: flex; align-items: center; gap: 10px; }
-        
+
+        .left-nav { display: flex; gap: 10px; }
+
         .btn {
-            text-decoration: none; font-size: 14px; background: white; 
-            padding: 5px 15px; border-radius: 12px; border: 2px solid #ddd; 
-            color: #555; font-weight: bold; cursor: pointer;
+            text-decoration: none; font-size: 16px; background: white; 
+            padding: 8px 16px; border-radius: 15px; border: 2px solid #ddd; 
+            color: #555; font-weight: bold; box-shadow: 0 4px 0 #eee; cursor: pointer;
         }
 
-        h1 { margin: 0; color: #333; font-size: 24px; }
+        #lang-select {
+            font-size: 16px; padding: 5px 10px; border-radius: 12px;
+            border: 2px solid #ddd; font-weight: bold; color: #555;
+            background: white; cursor: pointer;
+        }
 
-        /* --- MAIN STAGE (Horizontal Layout) --- */
+        #next-btn {
+            display: none; padding: 8px 30px; font-size: 18px; 
+            color: white; border: none; border-radius: 50px; cursor: pointer; 
+            font-weight: bold; border: 2px solid rgba(0,0,0,0.1);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2); text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+        
+        #next-btn.blink { animation: pulseBtn 1s infinite alternate; }
+        @keyframes pulseBtn {
+            0% { transform: scale(1); filter: brightness(1); }
+            100% { transform: scale(1.05); filter: brightness(1.1); box-shadow: 0 0 15px rgba(255,255,0, 0.6); }
+        }
+
+        .title-row {
+            width: 100%; text-align: center; margin-bottom: 10px; min-height: 40px;
+            display: flex; justify-content: center; align-items: center;
+        }
+        h1 { margin: 0; color: #333; font-size: 26px; white-space: normal; line-height: 1.2; }
+
+        /* GAME STAGE */
         #game-stage {
-            display: flex; 
-            flex-direction: row; /* Horizontal! */
-            align-items: flex-end; /* Align bottoms */
-            width: 98%; flex-grow: 1; /* Fill screen */
+            display: flex; justify-content: space-between; align-items: flex-end; 
+            width: 100%; max-width: 900px; 
+            flex-grow: 1; max-height: 650px;
             background: white; border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05); 
-            padding: 20px; 
-            position: relative; box-sizing: border-box; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            padding: 20px 5%; position: relative; box-sizing: border-box; margin-bottom: 20px;
         }
 
-        /* --- LEFT SIDE: SOURCE --- */
+        /* SOURCE */
         #source-area {
             display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-            width: 120px; height: 100%; max-height: 250px;
-            border-right: 2px dashed #eee; /* Divider instead of box */
-            padding-right: 20px; margin-right: 20px;
+            width: 140px; height: 240px; 
+            border: 3px dashed #ccc; border-radius: 20px;
+            background: #fafafa; flex-shrink: 0;
+            padding: 10px 0; box-sizing: border-box;
+            transition: opacity 0.3s;
         }
+        #source-area.locked { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
 
-        .mascot-face { width: 40px; height: 30px; position: relative; }
-        
+        .mascot-face { width: 40px; height: 30px; position: relative; flex-shrink: 0; }
+
         #target-hint {
-            font-size: 60px; font-weight: bold; line-height: 1; 
+            font-size: 80px; font-weight: bold; line-height: 1; margin: 0;
             text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+            flex-grow: 1; display: flex; align-items: center; justify-content: center;
         }
 
-        .helper-text { color: #aaa; font-weight: bold; font-size: 14px; }
-        
-        #spawner { width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; }
+        .helper-text { color: #aaa; font-weight: bold; font-size: 14px; text-align: center; margin-bottom: 5px; }
+        #spawner { width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
 
-        /* --- RIGHT SIDE: BUILD AREA --- */
+        /* BUILD AREA */
         #build-area-container {
             flex-grow: 1; height: 100%; position: relative;
-            display: flex; justify-content: center; align-items: flex-end; /* Build from bottom center */
-            padding-bottom: 10px;
+            display: flex; justify-content: center; align-items: flex-end;
+            margin-left: 10px;
         }
-        
         #block-holder { position: relative; transition: all 0.3s ease; }
 
-        /* --- BLOCKS (Slightly smaller for 1-20 fit) --- */
+        /* BLOCKS */
         .unit {
-            width: 50px; height: 50px; /* Reduced from 60 to fit 20 */
-            border-radius: 10px; position: absolute;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.15), 2px 2px 0 rgba(0,0,0,0.1);
+            width: 60px; height: 60px; border-radius: 12px; position: absolute;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.15), 3px 3px 0 rgba(0,0,0,0.1);
             display: flex; justify-content: center; align-items: center;
-            transition: transform 0.15s; cursor: pointer; box-sizing: border-box; z-index: 10;
+            transition: transform 0.15s; cursor: pointer;
+            box-sizing: border-box; z-index: 10;
         }
         .unit:active { transform: scale(0.95); }
 
         .draggable-one { cursor: grab; z-index: 100; position: static; animation: spawnPop 0.4s; }
+        .draggable-one:active { cursor: grabbing; transform: scale(1.1); }
 
         .ghost-slot {
-            width: 50px; height: 50px; 
-            border: 2px dashed #ddd; border-radius: 10px;
+            width: 60px; height: 60px; border: 2px dashed #ddd; border-radius: 12px;
             background: rgba(0,0,0,0.02); position: absolute; box-sizing: border-box;
         }
         .ghost-slot.highlight { background: rgba(255, 77, 77, 0.1); border-color: #ff4d4d; transform: scale(1.05); }
 
-        /* --- NEXT BUTTON (Top Right) --- */
-        #next-btn {
-            display: none; padding: 8px 25px; font-size: 16px; 
-            color: white; border: none; border-radius: 50px; cursor: pointer; 
-            font-weight: bold; box-shadow: 0 4px 0 rgba(0,0,0,0.2);
-        }
-        #next-btn.blink { animation: pulseBtn 1s infinite alternate; }
-
-        /* COLORS 1-20 */
+        /* COLORS (1-20) */
         .c1 { background: #ff4d4d; border: 3px solid #d63031; }
         .c2 { background: #ff9f43; border: 3px solid #e67e22; }
         .c3 { background: #feca57; border: 3px solid #f1c40f; }
@@ -119,7 +142,7 @@
         .c7 { background: #fd79a8; border: 3px solid #e84393; }
         .c8 { background: #e84393; border: 3px solid #c92876; }
         .c9 { background: #b2bec3; border: 3px solid #636e72; }
-        .c10 { background: white; border: 3px solid #ff4d4d; }
+        .c10 { background: white; border: 4px solid #ff4d4d; }
         .c11 { background: #d63031; border: 3px solid #b71540; }
         .c12 { background: #e17055; border: 3px solid #d35400; }
         .c13 { background: #fdcb6e; border: 3px solid #e1b12c; }
@@ -132,41 +155,55 @@
         .c20 { background: #ffeaa7; border: 3px solid #fdcb6e; }
 
         /* FACE */
-        .face-container { width: 100%; height: 100%; pointer-events: none; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 4px; }
-        .eyes-row { display: flex; justify-content: center; margin-bottom: 1px; }
-        .eye { width: 12px; height: 12px; background: white; border-radius: 50%; border: 2px solid #222; position: relative; margin: 0 -1px; }
-        .eye::after { content: ''; position: absolute; right: 2px; top: 3px; width: 3px; height: 3px; background: #222; border-radius: 50%; }
-        .mouth { width: 14px; height: 5px; border-bottom: 2px solid #222; border-radius: 0 0 10px 10px; }
+        .face-container { 
+            width: 100%; height: 100%; pointer-events: none;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 6px;
+        }
+        .eyes-row { display: flex; justify-content: center; align-items: center; margin-bottom: 2px; }
+        .eye { 
+            width: 14px; height: 14px; background: white; border-radius: 50%; border: 2px solid #222; 
+            position: relative; margin: 0 -1px; z-index: 2;
+        }
+        .eye::after { 
+            content: ''; position: absolute; right: 3px; top: 4px; width: 4px; height: 4px; background: #222; border-radius: 50%; 
+        }
+        .mouth { width: 16px; height: 6px; border-bottom: 3px solid #222; border-radius: 0 0 10px 10px; }
 
-        #tutorial-hand { position: absolute; bottom: 20px; left: 100px; font-size: 50px; pointer-events: none; z-index: 500; animation: moveHand 2s infinite; display: none; opacity: 0.9; }
+        #tutorial-hand {
+            position: absolute; top: 60%; left: 15%; font-size: 50px; pointer-events: none; z-index: 500;
+            animation: moveHand 2s infinite; display: none; opacity: 0.9;
+        }
+
         @keyframes spawnPop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-        @keyframes moveHand { 0% { transform: translate(0,0) rotate(-10deg); opacity:0;} 20%{opacity:1;} 80%{transform: translate(150px, -50px) rotate(-10deg); opacity: 0;} 100%{opacity:0;} }
+        @keyframes moveHand { 0% { transform: translate(0,0) rotate(-10deg); opacity:0;} 20%{opacity:1;} 80%{transform: translate(200px, 0) rotate(-10deg); opacity: 0;} 100%{opacity:0;} }
     </style>
 </head>
 <body>
     
     <div id="start-overlay">
-        <button id="start-btn" onclick="initGame()">PLAY ▶</button>
+        <h1 style="font-size: 36px; margin-bottom: 30px;">Ready?</h1>
+        <button id="start-btn" onclick="initGame()">START ▶</button>
     </div>
 
-    <div class="top-bar">
-        <div class="left-controls">
+    <div class="nav-row">
+        <div class="left-nav">
             <a href="index.html" class="btn">🏠 Home</a>
-            <select class="btn" id="lang-select" onchange="changeLanguage()">
-                <option value="en">🇺🇸 EN</option>
-                <option value="ar">🇸🇦 AR</option>
-                <option value="bn">🇧🇩 BN</option>
+            <select id="lang-select" onchange="changeLanguage()">
+                <option value="en">🇺🇸 English</option>
+                <option value="ar">🇸🇦 العربية</option>
+                <option value="bn">🇧🇩 বাংলা</option>
             </select>
         </div>
-        <h1 id="level-title">Let's Build!</h1>
         <button id="next-btn" onclick="nextLevel()">Next ➔</button>
     </div>
 
-    <div id="game-stage">
-        
-        <div id="tutorial-hand">👉</div>
+    <div class="title-row">
+        <h1 id="level-title">Let's make Number 1!</h1>
+    </div>
 
+    <div id="game-stage">
+        <div id="tutorial-hand">👉</div>
         <div id="source-area">
             <div class="mascot-face">
                 <div class="face-container">
@@ -174,12 +211,10 @@
                     <div class="mouth"></div>
                 </div>
             </div>
-            
             <div id="target-hint">1</div>
             <div class="helper-text">Drag Me!</div>
             <div id="spawner"></div>
         </div>
-
         <div id="build-area-container">
             <div id="block-holder"></div>
         </div>
@@ -192,25 +227,24 @@
         let currentLevel = 1;
         let blocksPlaced = 0;
         let isComplete = false;
-        
         const MAX_LEVEL = 20;
-        const BLOCK_SIZE = 50; // Smaller for Landscape fitting
+        const BLOCK_SIZE = 60;
         const GAP = 2; 
 
-        // TEXT
+        // TEXT DATA
         const UI_TEXT = {
-            en: { title: "Let's make Number", drag: "Drag Me!", next: "Next ➔" },
-            ar: { title: "لنبني الرقم", drag: "اسحبني", next: "التالي ⬅" },
-            bn: { title: "চলো বানাই সংখ্যা", drag: "টেনে আনো", next: "পরবর্তী ➔" }
+            en: { title: "Let's make Number", drag: "Drag Me!", next: "Next ➔", win: "You did it!" },
+            ar: { title: "لنبني الرقم", drag: "اسحبني", next: "التالي ⬅", win: "أحسنت!" },
+            bn: { title: "চলো বানাই সংখ্যা", drag: "টেনে আনো", next: "পরবর্তী ➔", win: "শাবাশ!" }
         };
 
         const SUCCESS_MESSAGES = {
-            en: ["Excellent!", "Great Job!", "Amazing!"],
-            ar: ["ممتاز!", "عمل رائع!", "مذهل!"],
-            bn: ["চমৎকার!", "দারুণ কাজ!", "অসাধারণ!"]
+            en: ["Excellent! You made number {n}!", "Great Job! Number {n} is complete!", "Amazing work! That is number {n}!"],
+            ar: ["ممتاز! لقد صنعت الرقم {n}!", "عمل رائع! اكتمل الرقم {n}!", "مذهل! هذا هو الرقم {n}!"],
+            bn: ["চমৎকার! তুমি সংখ্যা {n} তৈরি করেছ!", "দারুণ কাজ! সংখ্যা {n} সম্পূর্ণ হয়েছে!", "অসাধারণ! এটা হলো সংখ্যা {n}!"]
         };
 
-        // DATA 1-20
+        // NUMBERS 1-20
         const NUMBER_DATA = {
             1: { color: '#ff4d4d', en: '1', ar: '١', bn: '১' },
             2: { color: '#ff9f43', en: '2', ar: '٢', bn: '২' },
@@ -234,6 +268,7 @@
             20: { color: '#ffeaa7', en: '20', ar: '٢٠', bn: '২০' }
         };
 
+        // DOM ELEMENTS
         const spawner = document.getElementById('spawner');
         const sourceArea = document.getElementById('source-area');
         const holder = document.getElementById('block-holder');
@@ -248,17 +283,36 @@
             startLevel(1);
         }
 
+        // --- SAFE AUDIO ENGINE (FIX FOR HANGING) ---
         function speak(text, callback) {
-            let safety = setTimeout(() => { if(callback) callback(); }, 2000);
+            // Safety timeout: If browser voice fails, force callback after 2.5s
+            let safetyTimer = setTimeout(() => {
+                if(callback) callback();
+            }, 2500);
+
             if('speechSynthesis' in window){
                 window.speechSynthesis.cancel();
                 const msg = new SpeechSynthesisUtterance(text);
-                msg.lang = currentLang === 'ar' ? 'ar-SA' : (currentLang === 'bn' ? 'bn-BD' : 'en-US');
-                msg.pitch = 1.3; 
-                msg.onend = () => { clearTimeout(safety); if(callback) callback(); };
-                msg.onerror = () => { clearTimeout(safety); if(callback) callback(); };
+                if(currentLang === 'ar') msg.lang = 'ar-SA';
+                else if(currentLang === 'bn') msg.lang = 'bn-BD';
+                else msg.lang = 'en-US';
+                msg.pitch = 1.3; msg.rate = 1.0;
+                
+                msg.onend = function() {
+                    clearTimeout(safetyTimer); // Clear safety if successful
+                    if(callback) callback();
+                };
+                
+                msg.onerror = function() {
+                    clearTimeout(safetyTimer);
+                    if(callback) callback();
+                };
+
                 window.speechSynthesis.speak(msg);
-            } else { clearTimeout(safety); if(callback) callback(); }
+            } else {
+                clearTimeout(safetyTimer);
+                if(callback) callback();
+            }
         }
 
         function changeLanguage() {
@@ -273,96 +327,18 @@
             nextBtn.innerText = UI_TEXT[currentLang].next;
         }
 
-        // --- HORIZONTAL/WIDE SHAPE LOGIC (1-20) ---
-        function getHolderSize(n) {
-            let cols, rows;
-            // 1-10 (Standard logic)
-            if(n==1) {cols=1;rows=1;} else if(n==2) {cols=2;rows=1;}
-            else if(n<=4) {cols=2;rows=2;} else if(n<=6) {cols=2;rows=3;}
-            else if(n<=8) {cols=2;rows=4;} else if(n==9) {cols=3;rows=3;}
-            else if(n==10) {cols=2;rows=5;}
-            // 11-20 (Wide Logic for Landscape)
-            else if(n==11) {cols=3;rows=4;} // 1 top, 10 rect
-            else if(n==12) {cols=4;rows=3;} // 4x3 Rect
-            else if(n==13) {cols=4;rows=4;} // 1 top, 12 rect
-            else if(n==14) {cols=7;rows=2;} // 7x2 Wide Rect
-            else if(n==15) {cols=5;rows=3;} // 5x3 Wide Rect
-            else if(n==16) {cols=4;rows=4;} // 4x4 Square
-            else if(n==17) {cols=4;rows=5;} // 1 top, 16 sq
-            else if(n==18) {cols=6;rows=3;} // 6x3 Rect
-            else if(n==19) {cols=6;rows=4;} // 1 top, 18 rect
-            else if(n==20) {cols=5;rows=4;} // 5x4 Rect
-
-            return { width: cols * BLOCK_SIZE + (cols-1)*GAP, height: rows * BLOCK_SIZE + (rows-1)*GAP };
-        }
-
-        function getTargetCoordinates(number, index) {
-            let row, col;
-            // 1-10 Coordinates (unchanged logic)
-            if(number <= 10) {
-                if (number === 2) { row = 0; col = index; }
-                else if ([3,5,7].includes(number)) {
-                    if(index === number-1) { row = Math.floor((number-1)/2); col = 0; }
-                    else { row = Math.floor(index/2); col = index%2; }
-                }
-                else if (number === 9) { row = Math.floor(index/3); col = index%3; }
-                else if (number === 1) { row = 0; col = 0; }
-                else { row = Math.floor(index/2); col = index%2; }
-            } 
-            // 11-20 Coordinates (Wide Logic)
-            else {
-                // Odd numbers (11, 13, 15...) have 1 extra on top
-                const isOdd = number % 2 !== 0;
-                let bodySize = isOdd ? number - 1 : number;
-                let cols; 
-                
-                // Define width for body
-                if(bodySize === 10) cols = 5; // 2 rows
-                else if(bodySize === 12) cols = 4;
-                else if(bodySize === 14) cols = 7;
-                else if(bodySize === 15) cols = 5; // Wait 15 is odd
-                else if(bodySize === 16) cols = 4;
-                else if(bodySize === 18) cols = 6;
-                else if(bodySize === 20) cols = 5;
-
-                // Handle Number 15 (Wide 5x3)
-                if(number === 15) cols = 5;
-
-                if(isOdd && index === number-1) {
-                    // Top Block
-                    row = Math.ceil(bodySize/cols); col = 0;
-                } else {
-                    // Body Blocks
-                    row = Math.floor(index/cols); col = index%cols;
-                }
-            }
-            return { bottom: row * (BLOCK_SIZE + GAP), left: col * (BLOCK_SIZE + GAP) };
-        }
-
-        function getHeadIndex(num) {
-            if(num<=2) return 0;
-            if([3,5,7].includes(num)) return num-1;
-            if(num==9) return 6;
-            if(num<=10) return num-2;
-            
-            // 11-20
-            if(num%2 !== 0) return num-1; // Odds (top block)
-            if(num==12) return 8; // Top Left (4x3) -> index 8 (row 2, col 0)
-            if(num==14) return 7; // Top Left (7x2) -> index 7
-            if(num==16) return 12; 
-            if(num==18) return 12;
-            if(num==20) return 15;
-            return 0;
-        }
-
         function startLevel(num) {
-            currentLevel = num; blocksPlaced = 0; isComplete = false;
-            nextBtn.style.display = 'none'; nextBtn.classList.remove('blink'); 
+            currentLevel = num;
+            blocksPlaced = 0;
+            isComplete = false;
+            nextBtn.style.display = 'none';
+            nextBtn.classList.remove('blink'); 
             hand.style.display = 'none'; 
-            isInputLocked = true; sourceArea.style.opacity = 0.5;
+            isInputLocked = true;
+            sourceArea.classList.add('locked');
 
             updateUIText();
-            targetHint.style.color = (num === 10 || num === 20) ? '#aaa' : NUMBER_DATA[num].color;
+            targetHint.style.color = (num === 10) ? '#aaa' : NUMBER_DATA[num].color;
 
             holder.innerHTML = '';
             const size = getHolderSize(num);
@@ -383,92 +359,173 @@
 
             speak(NUMBER_DATA[num][currentLang], () => {
                 setTimeout(() => {
-                    speak(`${UI_TEXT[currentLang].title} ${NUMBER_DATA[num][currentLang]}!`, () => {
-                        isInputLocked = false; sourceArea.style.opacity = 1;
+                    const phrase = `${UI_TEXT[currentLang].title} ${NUMBER_DATA[num][currentLang]}!`;
+                    speak(phrase, () => {
+                        isInputLocked = false;
+                        sourceArea.classList.remove('locked');
                         if(num <= 2) hand.style.display = 'block';
                     });
-                }, 400);
+                }, 500);
             });
         }
 
-        // DRAG & DROP LOGIC
         function createDraggableOne() {
             if(isComplete) return;
             spawner.innerHTML = ''; 
             const unit = document.createElement('div');
             unit.className = 'unit c1 draggable-one'; 
             unit.setAttribute('draggable', 'true');
-            // MOUSE
+            
+            unit.addEventListener('touchstart', handleTouchStart, {passive: false});
+            unit.addEventListener('touchmove', handleTouchMove, {passive: false});
+            unit.addEventListener('touchend', handleTouchEnd);
             unit.addEventListener('dragstart', (e) => {
                 if(isInputLocked) { e.preventDefault(); return; }
-                e.dataTransfer.setData('text', 'red-one'); hand.style.display = 'none';
+                e.dataTransfer.setData('text/plain', 'red-one');
+                hand.style.display = 'none'; 
             });
-            // TOUCH
-            unit.addEventListener('touchstart', handleTouchStart, {passive:false});
-            unit.addEventListener('touchmove', handleTouchMove, {passive:false});
-            unit.addEventListener('touchend', handleTouchEnd);
             spawner.appendChild(unit);
         }
 
-        let dragItem=null, tX=0, tY=0;
+        let dragItem = null, touchOffsetX = 0, touchOffsetY = 0;
         function handleTouchStart(e) {
-            if(isInputLocked) return; e.preventDefault();
-            dragItem=e.target.closest('.draggable-one'); if(!dragItem)return;
-            hand.style.display='none'; const r=dragItem.getBoundingClientRect();
-            tX=e.touches[0].clientX-r.left; tY=e.touches[0].clientY-r.top;
-            dragItem.style.position='fixed'; dragItem.style.zIndex=999;
-            dragItem.style.width=BLOCK_SIZE+'px'; dragItem.style.height=BLOCK_SIZE+'px';
-            moveItem(e.touches[0].clientX, e.touches[0].clientY);
+            if(isInputLocked) return;
+            e.preventDefault();
+            const touch = e.touches[0];
+            dragItem = e.target.closest('.draggable-one');
+            if(!dragItem) return;
+            hand.style.display = 'none';
+            const rect = dragItem.getBoundingClientRect();
+            touchOffsetX = touch.clientX - rect.left;
+            touchOffsetY = touch.clientY - rect.top;
+            dragItem.style.position = 'fixed';
+            dragItem.style.zIndex = 1000;
+            dragItem.style.width = BLOCK_SIZE + 'px';
+            dragItem.style.height = BLOCK_SIZE + 'px';
+            moveItem(touch.clientX, touch.clientY);
         }
-        function handleTouchMove(e) { if(dragItem) { e.preventDefault(); moveItem(e.touches[0].clientX, e.touches[0].clientY); } }
-        function moveItem(x,y) { dragItem.style.left=(x-tX)+'px'; dragItem.style.top=(y-tY)+'px'; }
+        function handleTouchMove(e) { if(!dragItem) return; e.preventDefault(); moveItem(e.touches[0].clientX, e.touches[0].clientY); }
+        function moveItem(x, y) { dragItem.style.left = (x - touchOffsetX) + 'px'; dragItem.style.top = (y - touchOffsetY) + 'px'; }
         function handleTouchEnd(e) {
             if(!dragItem) return;
-            dragItem.style.display='none';
-            const el=document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-            dragItem.style.display='flex';
-            const slot=el?el.closest('.ghost-slot'):null;
-            if(slot && !slot.hasChildNodes()) fillSlot(slot); else createDraggableOne();
-            dragItem=null;
+            dragItem.style.display = 'none'; 
+            const elem = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+            dragItem.style.display = 'flex'; 
+            const slot = elem ? elem.closest('.ghost-slot') : null;
+            if (slot && !slot.hasChildNodes()) fillSlot(slot);
+            else createDraggableOne();
+            dragItem = null;
         }
 
-        holder.addEventListener('dragover', e=>e.preventDefault());
-        holder.addEventListener('drop', e=> {
-            e.preventDefault(); if(e.target.classList.contains('ghost-slot')) fillSlot(e.target);
-        });
+        holder.addEventListener('dragover', (e) => { e.preventDefault(); if (e.target.classList.contains('ghost-slot')) e.target.classList.add('highlight'); });
+        holder.addEventListener('dragleave', (e) => { if (e.target.classList.contains('ghost-slot')) e.target.classList.remove('highlight'); });
+        holder.addEventListener('drop', (e) => { e.preventDefault(); if (e.target.classList.contains('ghost-slot')) fillSlot(e.target); });
 
         function fillSlot(slot) {
             if(isInputLocked) return;
-            slot.classList.remove('ghost-slot'); slot.classList.add('unit', 'c1');
+            slot.classList.remove('ghost-slot', 'highlight');
+            slot.classList.add('unit', 'c1'); 
             slot.innerHTML = ''; 
+            slot.addEventListener('click', () => { 
+                speak(NUMBER_DATA[1][currentLang]); 
+                slot.style.transform = "scale(1.2)"; setTimeout(() => slot.style.transform = "scale(1)", 150); 
+            });
             blocksPlaced++;
-            speak(NUMBER_DATA[blocksPlaced][currentLang]);
+            speak(NUMBER_DATA[blocksPlaced][currentLang]); 
             
             if (blocksPlaced === currentLevel) {
-                isComplete = true; isInputLocked = true;
-                setTimeout(transformCharacter, 500);
-            } else setTimeout(createDraggableOne, 50);
+                isComplete = true; isInputLocked = true; 
+                setTimeout(transformCharacter, 600);
+            } else { setTimeout(createDraggableOne, 50); }
         }
 
         function transformCharacter() {
-            spawner.innerHTML='';
-            const blocks=holder.querySelectorAll('.unit');
-            const hIdx=getHeadIndex(currentLevel);
-            blocks.forEach((b,i)=>{
-                b.className=`unit c${currentLevel}`;
-                if(i===hIdx) b.innerHTML=`<div class="face-container"><div class="eyes-row"><div class="eye"></div><div class="eye"></div></div><div class="mouth"></div></div>`;
-                b.style.animation="popIn 0.5s";
+            spawner.innerHTML = ''; 
+            const blocks = holder.querySelectorAll('.unit');
+            const headIndex = getHeadIndex(currentLevel);
+
+            blocks.forEach((b, i) => {
+                b.className = `unit c${currentLevel}`;
+                if (i === headIndex) b.innerHTML = `<div class="face-container"><div class="eyes-row"><div class="eye"></div><div class="eye"></div></div><div class="mouth"></div></div>`;
+                b.style.animation = "popIn 0.5s ease-out";
+                b.onclick = () => { speak(NUMBER_DATA[currentLevel][currentLang]); b.style.transform = "scale(1.2)"; setTimeout(()=>b.style.transform="scale(1)",200); }
             });
-            const msg = SUCCESS_MESSAGES[currentLang][Math.floor(Math.random()*3)].replace("{n}", NUMBER_DATA[currentLevel][currentLang]);
-            speak(msg, () => {
-                nextBtn.style.display='block'; nextBtn.style.backgroundColor=NUMBER_DATA[currentLevel].color;
-                nextBtn.classList.add('blink');
+
+            speak(getSuccessMessage(currentLang, currentLevel), () => {
+                nextBtn.style.display = 'block';
+                nextBtn.style.backgroundColor = NUMBER_DATA[currentLevel].color;
+                nextBtn.style.color = [3,10,13,20].includes(currentLevel) ? '#555' : 'white'; 
+                nextBtn.classList.add('blink'); 
             });
         }
 
         function nextLevel() {
-            if(currentLevel<MAX_LEVEL) startLevel(currentLevel+1);
-            else alert(UI_TEXT[currentLang].win);
+            if (currentLevel < MAX_LEVEL) startLevel(currentLevel + 1);
+            else alert("Done!"); 
+        }
+
+        // --- GRID LOGIC 1-20 ---
+        function getHolderSize(n) {
+            let cols, rows;
+            if (n === 1) { cols = 1; rows = 1; }
+            else if (n === 2) { cols = 2; rows = 1; }
+            else if (n === 3 || n === 4) { cols = 2; rows = 2; }
+            else if (n === 5 || n === 6) { cols = 2; rows = 3; }
+            else if (n === 7 || n === 8) { cols = 2; rows = 4; }
+            else if (n === 9) { cols = 3; rows = 3; }
+            else if (n === 10) { cols = 2; rows = 5; }
+            else if (n === 11) { cols = 2; rows = 6; }
+            else if (n === 12) { cols = 3; rows = 4; }
+            else if (n === 13) { cols = 3; rows = 5; }
+            else if (n === 14) { cols = 2; rows = 7; }
+            else if (n === 15) { cols = 3; rows = 5; }
+            else if (n === 16) { cols = 4; rows = 4; }
+            else if (n === 17) { cols = 4; rows = 5; }
+            else if (n === 18) { cols = 3; rows = 6; }
+            else if (n === 19) { cols = 3; rows = 7; }
+            else if (n === 20) { cols = 4; rows = 5; }
+            return { width: cols * BLOCK_SIZE + (cols-1)*GAP, height: rows * BLOCK_SIZE + (rows-1)*GAP };
+        }
+
+        function getTargetCoordinates(number, index) {
+            let row, col;
+            if (number === 2) { row = 0; col = index; }
+            else if ([3,5,7,11,13,17,19].includes(number)) {
+                // Odd Stacks logic
+                const bodySize = number - 1;
+                let cols = 2;
+                if(number===13 || number===19) cols=3;
+                if(number===17) cols=4;
+                
+                if(index === bodySize) { // Top block
+                    row = Math.ceil(bodySize/cols); col = 0;
+                } else {
+                    row = Math.floor(index/cols); col = index%cols;
+                }
+            }
+            else if (number === 9) { row = Math.floor(index/3); col = index%3; }
+            else if (number === 12) { row = Math.floor(index/3); col = index%3; }
+            else if (number === 15) { row = Math.floor(index/3); col = index%3; }
+            else if (number === 16) { row = Math.floor(index/4); col = index%4; }
+            else if (number === 18) { row = Math.floor(index/3); col = index%3; }
+            else if (number === 20) { row = Math.floor(index/4); col = index%4; }
+            else if (number === 1) { row = 0; col = 0; }
+            else { row = Math.floor(index/2); col = index%2; } // 4,6,8,10,14
+            return { bottom: row * (BLOCK_SIZE + GAP), left: col * (BLOCK_SIZE + GAP) };
+        }
+
+        function getHeadIndex(num) {
+            if(num === 1) return 0;
+            if(num === 2) return 0;
+            if([3,5,7,11,13,17,19].includes(num)) return num - 1;
+            if(num === 9) return 6;
+            if(num === 12) return 9;
+            if(num === 15) return 12;
+            if(num === 16) return 12;
+            if(num === 18) return 15;
+            if(num === 20) return 16;
+            if([4,6,8,10,14].includes(num)) return num - 2; 
+            return 0;
         }
     </script>
 </body>
