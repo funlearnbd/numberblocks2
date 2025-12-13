@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Phase 1: Block Factory (Now with Sound!)</title>
+    <style>
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        h1 { color: #333; margin-bottom: 10px;}
+        p { color: #666; margin-bottom: 30px;}
+
+        /* The Container for our showcase */
+        #factory-floor {
+            display: flex;
+            gap: 20px;
+            align-items: flex-end; /* Align bottoms */
+            justify-content: center;
+            flex-wrap: wrap; /* Allow wrapping if screen is small */
+            padding: 40px;
+            width: 90%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            min-height: 300px;
+        }
+
+        /* --- THE NUMBER BLOCK CSS --- */
+        
+        .number-block {
+            display: grid;
+            gap: 2px; 
+            position: relative;
+            transition: transform 0.1s ease-out;
+            cursor: pointer;
+            user-select: none; /* Prevents highlighting text */
+        }
+
+        .number-block:active {
+            transform: scale(0.95) !important; /* Click squash effect */
+        }
+
+        /* The individual square unit */
+        .unit {
+            width: 40px; /* Slightly smaller to fit 1-10 on screen */
+            height: 40px;
+            border-radius: 6px;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.2), 2px 2px 0px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        /* The Face */
+        .face {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .eye {
+            position: absolute;
+            top: 25%;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            border: 2px solid black;
+        }
+        
+        .eye::after { /* Pupil */
+            content: '';
+            position: absolute;
+            right: 2px;
+            top: 3px;
+            width: 3px;
+            height: 3px;
+            background: black;
+            border-radius: 50%;
+        }
+
+        .eye.left { left: 8px; }
+        .eye.right { right: 8px; }
+
+        .mouth {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 6px;
+            border-bottom: 2px solid black;
+            border-radius: 0 0 10px 10px;
+        }
+
+        /* Number Tag */
+        .number-tag {
+            position: absolute;
+            top: -25px;
+            width: 100%;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .number-block:hover .number-tag { opacity: 1; }
+        .number-block:hover { transform: scale(1.1) translateY(-5px); z-index: 10; }
+
+        /* --- COLOR DEFINITIONS --- */
+        .color-1 { background: #ff4d4d; border: 2px solid #cc0000; } 
+        .color-2 { background: #ffaf40; border: 2px solid #e67e22; } 
+        .color-3 { background: #fffa65; border: 2px solid #f1c40f; } 
+        .color-4 { background: #32ff7e; border: 2px solid #2ecc71; } 
+        .color-5 { background: #18dcff; border: 2px solid #3498db; } 
+        .color-6 { background: #a29bfe; border: 2px solid #6c5ce7; } 
+        .color-7 { background: #fab1a0; border: 2px solid #e17055; } /* Rainbow/Peach */
+        .color-8 { background: #ff00ff; border: 2px solid #c71585; } /* Magenta */
+        .color-9 { background: #b2bec3; border: 2px solid #636e72; } /* Grey */
+        .color-10 { background: white; border: 3px solid #ff4d4d; } /* White/Red */
+
+    </style>
+</head>
+<body>
+
+    <h1>Phase 1: The Block Factory</h1>
+    <p>Click a block to hear it speak!</p>
+    
+    <div id="factory-floor"></div>
+
+    <script>
+        class NumberBlock {
+            constructor(value) {
+                this.value = value;
+                this.element = this.createDOM();
+            }
+
+            // --- SHAPE LOGIC ---
+            getLayout(n) {
+                //2 new style
+                if (n === 2) return { cols: 2, rows: 0 }; 
+                // 3 new shape
+                if (n === 3) return { cols: 2, rows: 1 };
+                // 4 = Square (2x2)
+                if (n === 4) return { cols: 2, rows: 2 };
+                // 5 new shape
+                if (n === 5) return { cols: 2, rows: 1 };
+                // 6 = Rectangle (2x3)
+                if (n === 6) return { cols: 2, rows: 3 };
+                // 7 new shape
+                if (n === 7) return { cols: 2, rows: 1 };
+                // 8 = Rectangle (2x4)
+                if (n === 8) return { cols: 2, rows: 4 };
+                // 9 = Square (3x3)
+                if (n === 9) return { cols: 3, rows: 3 };
+                // 10 = Tall Rectangle (2x5)
+                if (n === 10) return { cols: 2, rows: 5 };
+                
+                // 1, 2, 3, 5, 7 are usually stacks (1 column)
+                return { cols: 1, rows: n }; 
+            }
+
+            createDOM() {
+                const wrapper = document.createElement('div');
+                wrapper.classList.add('number-block');
+                
+                // Set Grid Shape
+                const layout = this.getLayout(this.value);
+                wrapper.style.gridTemplateColumns = `repeat(${layout.cols}, 1fr)`;
+
+                // Create the floating number tag
+                const tag = document.createElement('div');
+                tag.classList.add('number-tag');
+                tag.innerText = this.value;
+                wrapper.appendChild(tag);
+
+                // Create the individual units
+                for (let i = 0; i < this.value; i++) {
+                    const unit = document.createElement('div');
+                    unit.classList.add('unit');
+                    unit.classList.add(`color-${this.value}`); 
+                    
+                    // Put FACE on the first block (index 0)
+                    if (i === 0) {
+                        const face = document.createElement('div');
+                        face.classList.add('face');
+                        face.innerHTML = `
+                            <div class="eye left"></div>
+                            <div class="eye right"></div>
+                            <div class="mouth"></div>
+                        `;
+                        unit.appendChild(face);
+                    }
+                    
+                    // --- FIX FOR NUMBER 3 ---
+                    // Force 1 block on top, 2 blocks on bottom
+                    if (this.value === 3) {
+                        if (i === 1) { unit.style.gridColumn = '1'; unit.style.gridRow = '2'; }
+                        if (i === 2) { unit.style.gridColumn = '2'; unit.style.gridRow = '2'; }
+                    }
+
+                    // --- FIX FOR NUMBER 5 ---
+                    // Force 1 block on top, 4 blocks on bottom (2x2)
+                    if (this.value === 5) {
+                        if (i === 1) { unit.style.gridColumn = '1'; unit.style.gridRow = '2'; }
+                        if (i === 2) { unit.style.gridColumn = '2'; unit.style.gridRow = '2'; }
+                        if (i === 3) { unit.style.gridColumn = '1'; unit.style.gridRow = '3'; }
+                        if (i === 4) { unit.style.gridColumn = '2'; unit.style.gridRow = '3'; }
+                    }
+
+                    // --- FIX FOR NUMBER 7 ---
+                    // Force 1 block on top, 6 blocks on bottom (2x3)
+                    if (this.value === 7) {
+                        if (i === 1) { unit.style.gridColumn = '1'; unit.style.gridRow = '2'; }
+                        if (i === 2) { unit.style.gridColumn = '2'; unit.style.gridRow = '2'; }
+                        if (i === 3) { unit.style.gridColumn = '1'; unit.style.gridRow = '3'; }
+                        if (i === 4) { unit.style.gridColumn = '2'; unit.style.gridRow = '3'; }
+                        if (i === 5) { unit.style.gridColumn = '1'; unit.style.gridRow = '4'; }
+                        if (i === 6) { unit.style.gridColumn = '2'; unit.style.gridRow = '4'; }
+                    }
+
+                    wrapper.appendChild(unit);
+                }
+
+                // --- CLICK TO SPEAK INTERACTION ---
+                wrapper.addEventListener('click', () => {
+                   this.speak();
+                });
+
+                return wrapper;
+            }
+
+            speak() {
+                // 1. Visual Bounce
+                this.element.style.transform = "scale(1.2) translateY(-10px)";
+                setTimeout(() => {
+                    this.element.style.transform = "";
+                }, 200);
+
+                // 2. Audio (Browser Built-in)
+                // We cancel previous speech so they don't overlap if clicked fast
+                window.speechSynthesis.cancel(); 
+
+                const msg = new SpeechSynthesisUtterance();
+                msg.text = this.value.toString(); // "One", "Two", etc.
+                msg.rate = 1.0; // Normal speed
+                msg.pitch = 1.2; // Slightly higher pitch for "kid" voice effect
+                
+                window.speechSynthesis.speak(msg);
+            }
+        }
+
+        // --- SPAWN ALL NUMBERS (1 to 10) ---
+        const factoryFloor = document.getElementById('factory-floor');
+        
+        // Now spawns 1 through 10
+        const numbersToSpawn = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+        numbersToSpawn.forEach(num => {
+            const block = new NumberBlock(num);
+            factoryFloor.appendChild(block.element);
+        });
+
+    </script>
+</body>
+</html>
