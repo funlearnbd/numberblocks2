@@ -2,32 +2,118 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Number Block Math World</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Math World</title>
     <style>
-        body { font-family: 'Comic Sans MS', sans-serif; background: #e0f7fa; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        h1 { color: #006064; font-size: 3em; margin-bottom: 40px; }
-        .menu-btn {
-            background: white; width: 300px; padding: 20px; margin: 15px;
-            border-radius: 15px; text-align: center; text-decoration: none;
-            color: #333; font-size: 1.5em; font-weight: bold;
-            box-shadow: 0 5px 0 #bbb; transition: transform 0.1s; border: 2px solid #ddd;
+        body {
+            background-color: #f0f4f8; 
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            margin: 0; padding: 20px;
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            box-sizing: border-box;
         }
-        .menu-btn:hover { transform: translateY(-3px); border-color: #00bcd4; color: #00bcd4; }
-        .menu-btn:active { transform: translateY(2px); box-shadow: none; }
-        .tag { font-size: 0.6em; color: #888; display: block; margin-top: 5px; font-weight: normal; }
+
+        h1 {
+            font-size: 36px; color: #333; margin-bottom: 30px; text-align: center;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        /* CARD GRID */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%; max-width: 800px;
+        }
+
+        /* MENU CARD */
+        .card {
+            background: white; border-radius: 20px;
+            padding: 20px; text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border: 4px solid transparent;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer; text-decoration: none; color: inherit;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .card:active { transform: scale(0.95); }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+
+        /* SPECIFIC COLORS FOR EACH PHASE */
+        .card.p1 { border-color: #ff4d4d; }
+        .card.p1 .icon { background: #ff4d4d; }
+        
+        .card.p1-5 { border-color: #48dbfb; }
+        .card.p1-5 .icon { background: #48dbfb; }
+
+        .card.p2 { border-color: #00b894; }
+        .card.p2 .icon { background: #00b894; }
+
+        .card.p3 { border-color: #a29bfe; }
+        .card.p3 .icon { background: #a29bfe; }
+
+        /* CARD CONTENT */
+        .icon {
+            font-size: 40px; width: 80px; height: 80px;
+            border-radius: 50%; color: white;
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 15px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 { margin: 0 0 10px 0; font-size: 24px; color: #444; }
+        p { margin: 0; color: #777; font-size: 16px; line-height: 1.4; }
+
+        .btn-play {
+            margin-top: 15px; padding: 10px 30px;
+            border-radius: 50px; border: none;
+            color: white; font-weight: bold; font-size: 18px;
+            cursor: pointer; width: 100%;
+        }
+        .p1 .btn-play { background: #ff4d4d; }
+        .p1-5 .btn-play { background: #48dbfb; }
+        .p2 .btn-play { background: #00b894; }
+        .p3 .btn-play { background: #a29bfe; }
+
     </style>
 </head>
 <body>
-    <h1>🧩 Number World</h1>
-    
-    <a href="phase1.html" class="menu-btn">
-        Phase 1: The Gallery
-        <span class="tag">Meet the Numbers (Visuals)</span>
-    </a>
 
-    <a href="phase1-5.html" class="menu-btn">
-        Phase 2: The Builder
-        <span class="tag">Drag & Drop Game</span>
-    </a>
+    <h1>✨ Math World ✨</h1>
+
+    <div class="menu-grid">
+        
+        <a href="phase1.html" class="card p1">
+            <div class="icon">👀</div>
+            <h2>Meet Numbers</h2>
+            <p>Learn numbers 1 to 20! See their shapes and hear their names.</p>
+            <button class="btn-play">Learn ▶</button>
+        </a>
+
+        <a href="phase1-5.html" class="card p1-5">
+            <div class="icon">🏗️</div>
+            <h2>Let's Build</h2>
+            <p>Drag blocks to build the numbers yourself! Can you make them all?</p>
+            <button class="btn-play">Build ▶</button>
+        </a>
+
+        <a href="phase2.html" class="card p2">
+            <div class="icon">⚗️</div>
+            <h2>Math Lab</h2>
+            <p>Open Sandbox! Smash blocks together to add them up. (1+1=2)</p>
+            <button class="btn-play">Play ▶</button>
+        </a>
+
+        <a href="phase3.html" class="card p3">
+            <div class="icon">🌉</div>
+            <h2>Bridge Puzzle</h2>
+            <p>Use logic to pick the right block size to cross the river!</p>
+            <button class="btn-play">Solve ▶</button>
+        </a>
+
+    </div>
+
 </body>
 </html>
